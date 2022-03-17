@@ -1,0 +1,6 @@
+# Default values for basic-cluster-configuration.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# namespace: default
+storage_class_name: 
