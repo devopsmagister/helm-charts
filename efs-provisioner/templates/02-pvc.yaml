@@ -1,0 +1,20 @@
+{{ if eq .Values.provider "AWS" }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: auto-app
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    volume.beta.kubernetes.io/storage-class: {{.Values.storage_class_name | quote}}
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+    limits:
+      storage: 100Gi
+  storageClassName: {{.Values.storage_class_name}}
+
+{{end}}  

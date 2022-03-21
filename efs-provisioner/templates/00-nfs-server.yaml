@@ -1,0 +1,83 @@
+{{ if eq .Values.provider "GCP" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+  namespace: {{ .Release.Namespace}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: {{.Values.gcpImage}}
+        ports:
+          - name: nfs
+            containerPort: 2049
+          - name: mountd
+            containerPort: 20048
+          - name: rpcbind
+            containerPort: 111
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 2049
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 1
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 2049
+          timeoutSeconds: 2
+        resources:
+          requests:
+            cpu: 10m
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /exports
+            name: gce-pvc
+          # - name:  tls-keys
+          #   mountPath: "/tmp"
+          #   readOnly: true            
+      volumes:
+        - name: gce-pvc
+          gcePersistentDisk:
+            pdName: {{.Values.gcpPDName}}
+            fsType: ext4
+        # - name: tls-keys
+        #   secret:
+        #     secretName:  tls-keys
+
+
+      nodeSelector:
+             failure-domain.beta.kubernetes.io/zone: {{.Values.nfsZone}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-server
+  namespace: {{.Release.Namespace}}
+spec:
+  # clusterIP: 10.3.240.20
+  ports:
+    - name: nfs
+      port: 2049
+    - name: mountd
+      port: 20048
+    - name: rpcbind
+      port: 111
+  selector:
+    role: nfs-server
+{{end}}    

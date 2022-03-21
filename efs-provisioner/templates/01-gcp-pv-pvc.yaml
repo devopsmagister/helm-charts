@@ -1,0 +1,28 @@
+{{ if eq .Values.provider "GCP" }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: nfs-server
+    path: "/"
+    readOnly: false
+---
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: keycloak-h2-storage
+#   namespace: {{ .Release.Namespace }}
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: {{.Values.storage_class_name}}
+#   resources:
+#     requests:
+#       storage: 2Gi
+{{end}}      

@@ -1,0 +1,12 @@
+# Default values for basic-cluster-configuration.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+namespace: default
+efsId: 
+awsRegion: 
+storage_class_name: sc
+provider: "GCP"
+gcpImage: gcr.io/google_containers/volume-nfs:0.8
+gcpPDName: "gce-nfs-disk"
+nfsZone: "us-east1-d"

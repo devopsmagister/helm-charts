@@ -1,0 +1,12 @@
+{{ if eq .Values.provider "GCP" }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{.Values.storage_class_name}}
+provisioner: kubernetes.io/gce-pd
+reclaimPolicy: Retain
+parameters:
+  type: pd-standard
+  fstype: ext4
+volumeBindingMode: Immediate
+{{end}}
